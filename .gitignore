@@ -319,8 +319,8 @@ cache/
 # Output files you might not want to track
 output/
 results/
-*.txt
 *.out
+!requirements.txt
 
 # Configuration files with sensitive data
 config.json

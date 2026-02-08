@@ -165,7 +165,7 @@ if page == "🎯 Salary Predictor":
         overtime_hours = st.number_input("Overtime Hours / Month", 0, 100, 5)
         projects_completed = st.number_input("Projects Completed", 0, 50, 8)
 
-    if st.button("💰 Predict Salary", type="primary", use_container_width=True):
+    if st.button("💰 Predict Salary", type="primary"):
         input_data = {
             "age": age,
             "years_experience": years_experience,
@@ -244,7 +244,7 @@ elif page == "📊 Data Explorer":
             yaxis_title="Count",
             template="plotly_white", height=450,
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig)
 
     # --- Tab 2: Department ---
     with tab2:
@@ -258,13 +258,13 @@ elif page == "📊 Data Explorer":
                           color="Mean Salary", color_continuous_scale="Viridis",
                           title="Average Salary by Department", text_auto="$,.0f")
             fig1.update_layout(template="plotly_white", height=400)
-            st.plotly_chart(fig1, use_container_width=True)
+            st.plotly_chart(fig1)
         with c2:
             fig2 = px.bar(dept, y="Department", x="Count", orientation="h",
                           color="Count", color_continuous_scale="Blues",
                           title="Employee Count by Department", text_auto=True)
             fig2.update_layout(template="plotly_white", height=400)
-            st.plotly_chart(fig2, use_container_width=True)
+            st.plotly_chart(fig2)
 
     # --- Tab 3: Experience ---
     with tab3:
@@ -277,11 +277,11 @@ elif page == "📊 Data Explorer":
             opacity=0.6,
         )
         fig3.update_layout(template="plotly_white", height=500)
-        st.plotly_chart(fig3, use_container_width=True)
+        st.plotly_chart(fig3)
 
     # --- Tab 4: Raw data ---
     with tab4:
-        st.dataframe(data, use_container_width=True, height=400)
+        st.dataframe(data, height=400)
 
 # ===================================================================
 # PAGE 3 – Model Performance
@@ -319,7 +319,7 @@ elif page == "🏆 Model Performance":
             text_auto=".4f",
         )
         fig.update_layout(template="plotly_white", height=450, yaxis_title="")
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig)
 
     with tab_b:
         fig2 = make_subplots(rows=1, cols=3, subplot_titles=("RMSE", "MAE", "MAPE (%)"))
@@ -331,12 +331,11 @@ elif page == "🏆 Model Performance":
         fig2.add_trace(go.Bar(y=sorted_df.index, x=sorted_df["MAPE"], orientation="h",
                               marker_color="#ffa726", name="MAPE"), row=1, col=3)
         fig2.update_layout(template="plotly_white", height=450, showlegend=False)
-        st.plotly_chart(fig2, use_container_width=True)
+        st.plotly_chart(fig2)
 
     with tab_c:
         st.dataframe(scores_df.style.highlight_max(subset=["R2"], color="#c8e6c9")
-                     .highlight_min(subset=["RMSE", "MAE", "MAPE"], color="#c8e6c9"),
-                     use_container_width=True)
+                     .highlight_min(subset=["RMSE", "MAE", "MAPE"], color="#c8e6c9"))
 
     # Feature importance (if available)
     if model and hasattr(model, "feature_importances_") and preprocessor:
@@ -350,4 +349,4 @@ elif page == "🏆 Model Performance":
                         color="Importance", color_continuous_scale="Tealgrn",
                         title="Feature Importance (Best Model)")
         fig_fi.update_layout(template="plotly_white", height=500, yaxis_title="")
-        st.plotly_chart(fig_fi, use_container_width=True)
+        st.plotly_chart(fig_fi)
