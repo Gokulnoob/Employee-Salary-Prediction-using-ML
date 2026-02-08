@@ -5,8 +5,18 @@ from sklearn.linear_model import LinearRegression, Ridge, Lasso
 from sklearn.svm import SVR
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.model_selection import GridSearchCV, cross_val_score
-import xgboost as xgb
-import lightgbm as lgb
+try:
+    import xgboost as xgb
+    HAS_XGBOOST = True
+except ImportError:
+    xgb = None
+    HAS_XGBOOST = False
+try:
+    import lightgbm as lgb
+    HAS_LIGHTGBM = True
+except ImportError:
+    lgb = None
+    HAS_LIGHTGBM = False
 import joblib
 import os
 from typing import Dict, Any, Tuple, List
@@ -33,10 +43,16 @@ class ModelTrainer:
             'lasso_regression': Lasso(alpha=1.0),
             'random_forest': RandomForestRegressor(n_estimators=100, random_state=42),
             'gradient_boosting': GradientBoostingRegressor(n_estimators=100, random_state=42),
-            'xgboost': xgb.XGBRegressor(n_estimators=100, random_state=42),
-            'lightgbm': lgb.LGBMRegressor(n_estimators=100, random_state=42, verbose=-1),
             'svr': SVR(kernel='rbf', C=100, gamma=0.1)
         }
+        if HAS_XGBOOST:
+            self.models['xgboost'] = xgb.XGBRegressor(n_estimators=100, random_state=42)
+        else:
+            print("[WARNING] xgboost is not installed. Skipping XGBoost model.")
+        if HAS_LIGHTGBM:
+            self.models['lightgbm'] = lgb.LGBMRegressor(n_estimators=100, random_state=42, verbose=-1)
+        else:
+            print("[WARNING] lightgbm is not installed. Skipping LightGBM model.")
         print(f"Initialized {len(self.models)} models for training")
     
     def train_models(self, X_train: pd.DataFrame, y_train: pd.Series):
@@ -133,7 +149,7 @@ class ModelTrainer:
             }
         }
         
-        if model_name not in param_grids:
+        if model_name not in param_grids or model_name not in self.models:
             print(f"No parameter grid defined for {model_name}")
             return {}
         
